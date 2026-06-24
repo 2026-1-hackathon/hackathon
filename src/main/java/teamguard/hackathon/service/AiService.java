@@ -29,8 +29,8 @@ public class AiService {
 
     private final RoomRepository roomRepository;
     private final AssignmentRepository assignmentRepository;
-    private final ObjectMapper objectMapper;
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final RestClient restClient = RestClient.builder()
             .baseUrl("https://api.openai.com")
             .build();
