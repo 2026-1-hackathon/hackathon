@@ -388,6 +388,24 @@
   color: #9ca3af;
 }
 
+/* ── 시작 선택 카드 ── */
+.choose-card {
+  flex: 1;
+  background: #fff;
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 32px 24px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+.choose-card:hover {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px #dbeafe;
+  transform: translateY(-2px);
+}
+
 /* ── 반응형 ── */
 @media (max-width: 860px) {
   .hero { flex-direction: column; gap: 48px; }

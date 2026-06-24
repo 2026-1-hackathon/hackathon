@@ -1,4 +1,177 @@
 
+/* ── 팀원 카드 (Step3) ─────────────────────────── */
+.member-cards { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+.member-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+.member-card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.member-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.member-card-info { flex: 1; }
+.member-card-name { font-size: 15px; font-weight: 700; color: #111; }
+.member-card-meta { font-size: 13px; color: #6b7280; margin-top: 2px; }
+.member-skills { display: flex; flex-wrap: wrap; gap: 8px; }
+.member-skill-chip {
+  background: #f3f4f6;
+  border-radius: 99px;
+  padding: 5px 12px;
+  font-size: 12px;
+  color: #374151;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.skill-stars-sm { color: #f59e0b; font-size: 10px; letter-spacing: 1px; }
+
+/* 역량 입력 (Step3) */
+.skill-section { margin-bottom: 16px; }
+.skill-rows { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.skill-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+.skill-role-name { font-size: 14px; font-weight: 600; color: #374151; width: 100px; flex-shrink: 0; }
+
+.hour-input { position: relative; display: flex; align-items: center; }
+.hour-input .field-input { padding-right: 34px; }
+.hour-unit { position: absolute; right: 12px; font-size: 13px; color: #9ca3af; pointer-events: none; }
+
+.align-end { align-items: flex-end; }
+
+/* ── 결과 페이지 (Step4) ───────────────────────── */
+.result-page { display: flex; flex-direction: column; gap: 20px; }
+
+.result-banner {
+  border: 1.5px solid;
+  border-radius: 14px;
+  padding: 24px 28px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.result-proj-name { font-size: 20px; font-weight: 800; color: #111; margin-bottom: 4px; }
+.result-proj-sub  { font-size: 14px; color: #6b7280; margin-bottom: 4px; }
+.result-risk-pill {
+  padding: 8px 18px;
+  border: 1.5px solid;
+  border-radius: 99px;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.section-title { font-size: 17px; font-weight: 800; color: #111; margin: 0 0 4px; }
+.section-sub   { font-size: 13px; color: #9ca3af; margin: 0 0 20px; }
+
+/* 배정 카드 */
+.assign-cards { display: flex; flex-direction: column; gap: 12px; }
+.assign-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 14px 18px;
+}
+.assign-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  color: #fff; font-size: 18px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.assign-info { flex: 1; }
+.assign-name     { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 4px; }
+.assign-role-tag { display: inline-block; padding: 3px 12px; border-radius: 99px; font-size: 12px; font-weight: 700; }
+.assign-score-wrap { display: flex; align-items: baseline; gap: 4px; flex-direction: column; align-items: flex-end; width: 80px; }
+.assign-score-num   { font-size: 24px; font-weight: 900; }
+.assign-score-label { font-size: 12px; color: #9ca3af; }
+.assign-score-bar   { width: 80px; height: 5px; background: #e5e7eb; border-radius: 3px; margin-top: 4px; }
+.assign-score-bar div { height: 100%; border-radius: 3px; }
+
+/* 리스크 그리드 */
+.risk-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.risk-card {
+  border-radius: 12px;
+  padding: 18px 20px;
+  border: 1.5px solid;
+}
+.rk-ok     { background: #f0fdf4; border-color: #86efac; }
+.rk-warn   { background: #fffbeb; border-color: #fde68a; }
+.rk-danger { background: #fff1f2; border-color: #fecaca; }
+
+.risk-card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+.risk-card-icon   { font-size: 20px; flex-shrink: 0; }
+.risk-card-title  { font-size: 14px; font-weight: 700; color: #111; }
+.risk-card-sub    { font-size: 12px; color: #6b7280; margin-top: 2px; }
+.risk-card-body   { font-size: 13px; color: #374151; display: flex; flex-direction: column; gap: 5px; line-height: 1.5; }
+
+.risk-score-num { font-size: 36px; font-weight: 900; color: #111; margin-bottom: 8px; }
+.risk-score-bar { width: 100%; height: 6px; background: #e5e7eb; border-radius: 3px; }
+.risk-score-bar div { height: 100%; border-radius: 3px; transition: width 0.4s; }
+
+/* AI 보고서 카드 */
+.ai-report-card { }
+.ai-report-body {
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ai-report-body p {
+  margin: 0;
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.7;
+}
+
+.btn-reset {
+  padding: 13px 24px;
+  background: none;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #6b7280;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+.btn-reset:hover { border-color: #9ca3af; color: #111; }
+
+@media (max-width: 640px) {
+  .risk-grid { grid-template-columns: 1fr; }
+  .assign-score-bar { width: 60px; }
+}
+
+/* ─────────────────────────────────────────────── */
+
 .az-api-error {
   margin-bottom: 18px;
   padding: 14px 16px;

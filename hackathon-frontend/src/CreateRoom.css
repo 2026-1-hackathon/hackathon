@@ -1,0 +1,76 @@
+.cr-check {
+  width: 64px;
+  height: 64px;
+  background: #16a34a;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.cr-done-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111;
+  margin-bottom: 8px;
+}
+
+.cr-done-desc {
+  font-size: 15px;
+  color: #6b7280;
+  margin-bottom: 28px;
+}
+
+.cr-code-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #f3f4f6;
+  border: 2px dashed #d1d5db;
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+
+.cr-code {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: #2563eb;
+  font-family: 'Courier New', monospace;
+}
+
+.cr-copy {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.cr-copy:hover { background: #1d4ed8; }
+
+.cr-hint {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-bottom: 0;
+}
+
+.cr-error {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #be123c;
+  margin-top: 12px;
+}

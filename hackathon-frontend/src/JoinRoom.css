@@ -1,0 +1,85 @@
+.jr-code-input {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-align: center;
+  padding: 16px;
+}
+
+.jr-error {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #be123c;
+  margin-top: 12px;
+}
+
+.jr-role-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.jr-role-card {
+  background: #f9fafb;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+
+.jr-role-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 12px;
+}
+
+.jr-role-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.jr-role-row:last-child { margin-bottom: 0; }
+
+.jr-role-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  width: 40px;
+  flex-shrink: 0;
+}
+
+.jr-check {
+  width: 64px;
+  height: 64px;
+  background: #16a34a;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.jr-done-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111;
+  margin-bottom: 8px;
+}
+
+.jr-done-desc {
+  font-size: 15px;
+  color: #6b7280;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+@media (max-width: 560px) {
+  .jr-role-grid { grid-template-columns: 1fr; }
+}

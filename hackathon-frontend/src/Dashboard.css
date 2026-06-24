@@ -1,0 +1,553 @@
+.db-page {
+  min-height: 100vh;
+  background: #f3f4f6;
+  font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', -apple-system, sans-serif;
+}
+
+/* ── 헤더 ── */
+.db-header {
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  height: 62px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.db-back {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #6b7280;
+  cursor: pointer;
+  font-family: inherit;
+  width: 80px;
+}
+.db-back:hover { color: #111; }
+
+.db-header-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.db-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111;
+}
+
+.db-code-chip {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 20px;
+  padding: 3px 12px;
+  font-size: 12px;
+  color: #1d4ed8;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.db-code-chip:hover { background: #dbeafe; }
+
+.db-ai-btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.db-ai-btn:hover:not(:disabled) { background: #1d4ed8; }
+.db-ai-btn:disabled { background: #d1d5db; cursor: not-allowed; }
+
+/* ── 통계 바 ── */
+.db-stats {
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0 24px;
+  overflow-x: auto;
+}
+
+.db-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 28px;
+  border-right: 1px solid #f3f4f6;
+  min-width: 90px;
+}
+
+.db-stat-num {
+  font-size: 22px;
+  font-weight: 900;
+  color: #111;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.db-stat-lbl {
+  font-size: 11px;
+  color: #9ca3af;
+  font-weight: 600;
+}
+
+/* ── 탭 ── */
+.db-tabs {
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  padding: 0 24px;
+  gap: 4px;
+}
+
+.db-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #9ca3af;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.db-tab:hover { color: #111; }
+.db-tab.active { color: #2563eb; border-bottom-color: #2563eb; }
+
+/* ── 에러 ── */
+.db-error {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 13px;
+  color: #be123c;
+  margin: 12px 24px 0;
+}
+
+/* ── 본문 ── */
+.db-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 24px 80px;
+}
+
+/* ── 섹션 헤더 ── */
+.db-sec-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+
+.db-sec-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #111;
+  margin-bottom: 4px;
+}
+
+.db-sec-sub {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+/* ── 버튼 ── */
+.db-btn-primary {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.db-btn-primary:hover:not(:disabled) { background: #1d4ed8; }
+.db-btn-primary:disabled { background: #d1d5db; cursor: not-allowed; }
+
+.db-btn-ghost {
+  background: none;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 9px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: border-color 0.15s;
+}
+.db-btn-ghost:hover:not(:disabled) { border-color: #9ca3af; color: #111; }
+.db-btn-ghost:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── 빈 상태 ── */
+.db-empty {
+  text-align: center;
+  padding: 48px 24px;
+  background: #fff;
+  border: 1.5px dashed #e5e7eb;
+  border-radius: 14px;
+  font-size: 14px;
+  color: #9ca3af;
+  line-height: 1.8;
+}
+
+/* ── 경고 ── */
+.db-warn {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #92400e;
+  margin-top: 16px;
+}
+
+/* ── 아바타 ── */
+.db-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── 팀원 카드 ── */
+.db-member-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.db-member-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.db-member-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.db-member-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+}
+
+.db-member-meta {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.db-skill-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.db-skill-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 12px;
+  color: #374151;
+  font-weight: 600;
+}
+
+.db-skill-stars {
+  color: #f59e0b;
+  letter-spacing: -1px;
+  font-size: 11px;
+}
+
+/* ── 배정 결과 ── */
+.db-assign-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.db-assign-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+
+.db-assign-info {
+  flex: 1;
+}
+
+.db-assign-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 4px;
+}
+
+.db-assign-role {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 6px;
+}
+
+.db-assign-scores {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.db-assign-score-col {
+  text-align: right;
+  min-width: 80px;
+}
+
+.db-assign-total {
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.db-assign-score-lbl {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
+.db-score-bar {
+  width: 80px;
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 2px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+.db-score-bar div { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
+
+/* ── 업무 관리 ── */
+.db-task-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.db-task-select,
+.db-task-input {
+  padding: 9px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #111;
+  outline: none;
+  transition: border-color 0.15s;
+  background: #fff;
+}
+.db-task-select:focus,
+.db-task-input:focus { border-color: #2563eb; }
+
+.db-task-input { flex: 1; min-width: 120px; }
+.db-task-select { min-width: 100px; }
+
+.db-task-group {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.db-task-group-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-bottom: 1px solid #f3f4f6;
+  background: #fafafa;
+}
+
+.db-task-group-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.db-task-group-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111;
+}
+
+.db-task-group-cnt {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-left: 4px;
+}
+
+.db-task-prog-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.db-task-prog-bar {
+  width: 80px;
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.db-task-prog-bar div { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+
+.db-task-prog-pct {
+  font-size: 12px;
+  color: #6b7280;
+  min-width: 32px;
+  text-align: right;
+}
+
+.db-task-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.db-task-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border-bottom: 1px solid #f9fafb;
+  transition: background 0.1s;
+}
+.db-task-item:last-child { border-bottom: none; }
+.db-task-item:hover { background: #fafafa; }
+.db-task-item.overdue { background: #fff1f2; }
+
+.db-status-btn {
+  border: none;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+.db-status-btn:hover { opacity: 0.8; }
+.st-todo   { background: #f3f4f6; color: #374151; }
+.st-doing  { background: #dbeafe; color: #1d4ed8; }
+.st-done   { background: #d1fae5; color: #065f46; }
+
+.db-task-title {
+  flex: 1;
+  font-size: 14px;
+  color: #111;
+}
+
+.db-task-meta {
+  font-size: 12px;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+.db-task-overdue {
+  font-size: 11px;
+  font-weight: 700;
+  color: #dc2626;
+  background: #fff1f2;
+  padding: 2px 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.db-task-del {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #d1d5db;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.db-task-del:hover { color: #dc2626; }
+
+/* ── AI 리포트 ── */
+.db-ai-report {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid #2563eb;
+  border-radius: 12px;
+  padding: 28px 32px;
+  font-size: 15px;
+  line-height: 1.9;
+  color: #374151;
+  white-space: pre-wrap;
+}
+
+/* ── 반응형 ── */
+@media (max-width: 640px) {
+  .db-header { padding: 0 16px; }
+  .db-body { padding: 20px 16px 60px; }
+  .db-member-grid { grid-template-columns: 1fr; }
+  .db-task-form { flex-direction: column; }
+  .db-task-input,
+  .db-task-select { width: 100% !important; }
+  .db-tab { padding: 12px 10px; font-size: 13px; }
+  .db-assign-card { flex-wrap: wrap; }
+  .db-assign-score-col { min-width: unset; }
+  .db-ai-report { padding: 20px 18px; }
+}

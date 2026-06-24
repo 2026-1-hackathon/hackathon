@@ -1,12 +1,90 @@
 import { useState } from "react";
 import "./App.css";
-import Analyze from "./Analyze.jsx";
+import CreateRoom from "./CreateRoom.jsx";
+import JoinRoom from "./JoinRoom.jsx";
+import Dashboard from "./Dashboard.jsx";
+
+function ChooseMode({ onCreate, onJoin, onBack }) {
+  return (
+    <div style={{
+      minHeight: "100vh",
+      background: "#f3f4f6",
+      fontFamily: "'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',-apple-system,sans-serif",
+    }}>
+      <header style={{
+        background: "#fff", borderBottom: "1px solid #e5e7eb",
+        height: 62, padding: "0 28px",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        position: "sticky", top: 0, zIndex: 10,
+      }}>
+        <button onClick={onBack} style={{
+          background: "none", border: "none", fontSize: 14,
+          color: "#6b7280", cursor: "pointer", fontFamily: "inherit",
+        }}>← 홈으로</button>
+        <span style={{ fontSize: 18, fontWeight: 800, color: "#111" }}>팀가드</span>
+        <div style={{ width: 80 }} />
+      </header>
+      <div style={{ maxWidth: 560, margin: "80px auto", padding: "0 24px" }}>
+        <h1 style={{
+          fontSize: 30, fontWeight: 900, color: "#111",
+          marginBottom: 8, letterSpacing: -1,
+        }}>어떻게 시작할까요?</h1>
+        <p style={{ fontSize: 15, color: "#6b7280", marginBottom: 40 }}>
+          팀장이라면 방을 만들고, 팀원이라면 초대코드로 참여하세요
+        </p>
+        <div style={{ display: "flex", gap: 16 }}>
+          <button className="choose-card" onClick={onCreate}>
+            <div style={{ fontSize: 36, marginBottom: 14 }}>🏗️</div>
+            <div style={{ fontSize: 17, fontWeight: 800, color: "#111", marginBottom: 8 }}>
+              방 만들기
+            </div>
+            <div style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.7 }}>
+              프로젝트 정보와 역할을 설정하고<br />팀원을 초대합니다
+            </div>
+          </button>
+          <button className="choose-card" onClick={onJoin}>
+            <div style={{ fontSize: 36, marginBottom: 14 }}>🔑</div>
+            <div style={{ fontSize: 17, fontWeight: 800, color: "#111", marginBottom: 8 }}>
+              코드로 참여
+            </div>
+            <div style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.7 }}>
+              초대코드를 입력해서 팀원 정보를<br />등록하거나 결과를 확인합니다
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
-  const [showAnalyze, setShowAnalyze] = useState(false);
+  const [view, setView] = useState("landing");
+  const [roomData, setRoomData] = useState(null);
 
-  if (showAnalyze) return <Analyze onBack={() => setShowAnalyze(false)} />;
+  if (view === "createRoom") return (
+    <CreateRoom
+      onBack={() => setView("choose")}
+      onDone={(data) => { setRoomData(data); setView("dashboard"); }}
+    />
+  );
+  if (view === "joinRoom") return (
+    <JoinRoom
+      onBack={() => setView("choose")}
+      onDashboard={(data) => { setRoomData(data); setView("dashboard"); }}
+    />
+  );
+  if (view === "dashboard") return (
+    <Dashboard roomData={roomData} onBack={() => setView("landing")} />
+  );
+  if (view === "choose") return (
+    <ChooseMode
+      onCreate={() => setView("createRoom")}
+      onJoin={() => setView("joinRoom")}
+      onBack={() => setView("landing")}
+    />
+  );
 
+  // 랜딩 페이지
   return (
     <div className="page">
 
@@ -17,7 +95,7 @@ export default function App() {
           <div className="nav-right">
             <a href="#features" className="nav-link">기능</a>
             <a href="#how" className="nav-link">사용법</a>
-            <button className="nav-cta" onClick={() => setShowAnalyze(true)}>써보기</button>
+            <button className="nav-cta" onClick={() => setView("choose")}>써보기</button>
           </div>
         </div>
       </nav>
@@ -36,7 +114,7 @@ export default function App() {
             팀가드가 역할 분배부터 리스크 예측까지 대신 합니다.
           </p>
           <div className="hero-actions">
-            <button className="btn-main" onClick={() => setShowAnalyze(true)}>지금 바로 써보기</button>
+            <button className="btn-main" onClick={() => setView("choose")}>지금 바로 써보기</button>
             <a href="#how" className="btn-sub">어떻게 작동해요?</a>
           </div>
         </div>
@@ -114,20 +192,20 @@ export default function App() {
           <div className="how-steps">
             <div className="how-step">
               <div className="step-circle">1</div>
-              <h3>팀원 정보 입력</h3>
-              <p>이름, 가능한 시간, 잘하는 것, 하고 싶은 역할을 입력합니다. 5분도 안 걸려요.</p>
+              <h3>팀장이 방 만들기</h3>
+              <p>프로젝트명, 역할, 마감일을 설정하면 초대코드가 생성됩니다.</p>
             </div>
             <div className="how-arrow">→</div>
             <div className="how-step">
               <div className="step-circle">2</div>
-              <h3>AI가 분석</h3>
-              <p>누가 어떤 역할에 적합한지, 어디서 병목이 생길지 자동으로 분석합니다.</p>
+              <h3>팀원이 코드로 참여</h3>
+              <p>각자 역량과 선호도를 직접 입력합니다. 서로 눈치 볼 필요 없이.</p>
             </div>
             <div className="how-arrow">→</div>
             <div className="how-step">
               <div className="step-circle">3</div>
-              <h3>결과 공유</h3>
-              <p>역할 분배안과 리스크 리포트를 팀에 공유하고 바로 팀플 시작.</p>
+              <h3>AI가 최적 배정</h3>
+              <p>역할 배정 + 업무 관리 + AI 리포트까지 한 번에.</p>
             </div>
           </div>
         </div>
@@ -139,7 +217,7 @@ export default function App() {
           <div className="cta-inner">
             <h2>팀플 시작 전에 한 번만 써보세요</h2>
             <p>역할 정하는 시간 아끼고, 나중에 후회하는 일 줄이세요.</p>
-            <button className="btn-main btn-lg" onClick={() => setShowAnalyze(true)}>
+            <button className="btn-main btn-lg" onClick={() => setView("choose")}>
               팀가드 시작하기 →
             </button>
           </div>
