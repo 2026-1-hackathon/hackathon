@@ -8,7 +8,10 @@ import teamguard.hackathon.domain.Room;
 import teamguard.hackathon.dto.CreateRoomRequest;
 import teamguard.hackathon.repository.RoleRepository;
 import teamguard.hackathon.repository.RoomRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -78,5 +81,38 @@ public class RoomController {
                     "가중치 중 하나는 0보다 커야 합니다."
             );
         }
+    }
+
+    @GetMapping("/invite/{inviteCode}")
+    public Map<String, Object> getRoomByInviteCode(
+            @PathVariable String inviteCode
+    ) {
+        Room room = roomRepository.findByInviteCode(inviteCode)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "방을 찾을 수 없습니다."
+                ));
+
+        List<Map<String, Object>> roles = roleRepository
+                .findByRoomId(room.getId())
+                .stream()
+                .map(role -> Map.<String, Object>of(
+                        "roleId", role.getId(),
+                        "name", role.getName(),
+                        "workload", role.getWorkload(),
+                        "description",
+                        role.getDescription() == null
+                                ? ""
+                                : role.getDescription()
+                ))
+                .toList();
+
+        return Map.of(
+                "roomId", room.getId(),
+                "title", room.getTitle(),
+                "topic", room.getTopic(),
+                "deadline", room.getDeadline(),
+                "roles", roles
+        );
     }
 }
