@@ -3,7 +3,14 @@ import "./common.css";
 import "./CreateRoom.css";
 import { api } from "./api.js";
 
-const COLORS = ["#6366f1", "#0ea5e9", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6"];
+const COLORS = [
+  "#6366f1",
+  "#0ea5e9",
+  "#10b981",
+  "#f59e0b",
+  "#ec4899",
+  "#8b5cf6",
+];
 const STEPS = ["프로젝트 정보", "역할 설정", "가중치 설정"];
 
 function StepBar({ current }) {
@@ -18,10 +25,14 @@ function StepBar({ current }) {
             {i < STEPS.length - 1 && (
               <div className={`stepbar-line ${done ? "done" : ""}`} />
             )}
-            <div className={`stepbar-circle ${active ? "active" : ""} ${done ? "done" : ""}`}>
+            <div
+              className={`stepbar-circle ${active ? "active" : ""} ${done ? "done" : ""}`}
+            >
               {done ? "✓" : n}
             </div>
-            <div className={`stepbar-label ${active ? "active" : ""}`}>{label}</div>
+            <div className={`stepbar-label ${active ? "active" : ""}`}>
+              {label}
+            </div>
           </div>
         );
       })}
@@ -31,12 +42,20 @@ function StepBar({ current }) {
 
 export default function CreateRoom({ onBack, onDone }) {
   const [step, setStep] = useState(1);
-  const [project, setProject] = useState({ title: "", topic: "", deadline: "" });
+  const [project, setProject] = useState({
+    title: "",
+    topic: "",
+    deadline: "",
+  });
   const [roles, setRoles] = useState([
     { name: "백엔드", workload: 20, description: "API 및 DB 개발" },
     { name: "프론트엔드", workload: 15, description: "UI 화면 개발" },
   ]);
-  const [roleForm, setRoleForm] = useState({ name: "", workload: 10, description: "" });
+  const [roleForm, setRoleForm] = useState({
+    name: "",
+    workload: 10,
+    description: "",
+  });
   const [weights, setWeights] = useState({ skill: 6, time: 6, preference: 2 });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -97,6 +116,9 @@ export default function CreateRoom({ onBack, onDone }) {
       topic: fullRoomData.topic,
       deadline: fullRoomData.deadline,
       roles: fullRoomData.roles,
+      skillWeight: fullRoomData.skillWeight ?? weights.skill,
+      timeWeight: fullRoomData.timeWeight ?? weights.time,
+      preferenceWeight: fullRoomData.preferenceWeight ?? weights.preference,
     });
   };
 
@@ -122,7 +144,9 @@ export default function CreateRoom({ onBack, onDone }) {
                 {copied ? "복사됨 ✓" : "복사"}
               </button>
             </div>
-            <p className="cr-hint">팀원들이 "코드로 참여"를 눌러 이 코드를 입력하면 됩니다</p>
+            <p className="cr-hint">
+              팀원들이 "코드로 참여"를 눌러 이 코드를 입력하면 됩니다
+            </p>
             <button
               className="btn-next"
               style={{ width: "100%", marginTop: 24 }}
@@ -139,7 +163,9 @@ export default function CreateRoom({ onBack, onDone }) {
   return (
     <div className="az-page">
       <header className="az-header">
-        <button className="az-back" onClick={onBack}>← 뒤로</button>
+        <button className="az-back" onClick={onBack}>
+          ← 뒤로
+        </button>
         <span className="az-logo">팀가드</span>
         <div style={{ width: 80 }} />
       </header>
@@ -162,7 +188,9 @@ export default function CreateRoom({ onBack, onDone }) {
                 className="field-input"
                 placeholder="ex) 캡스톤 디자인 최종 프로젝트"
                 value={project.title}
-                onChange={(e) => setProject((p) => ({ ...p, title: e.target.value }))}
+                onChange={(e) =>
+                  setProject((p) => ({ ...p, title: e.target.value }))
+                }
               />
             </div>
             <div className="field" style={{ marginBottom: 16 }}>
@@ -171,7 +199,9 @@ export default function CreateRoom({ onBack, onDone }) {
                 className="field-input"
                 placeholder="ex) AI 기반 팀 역할 자동 분배 시스템"
                 value={project.topic}
-                onChange={(e) => setProject((p) => ({ ...p, topic: e.target.value }))}
+                onChange={(e) =>
+                  setProject((p) => ({ ...p, topic: e.target.value }))
+                }
               />
             </div>
             <div className="field" style={{ marginBottom: 16 }}>
@@ -180,7 +210,9 @@ export default function CreateRoom({ onBack, onDone }) {
                 className="field-input"
                 type="datetime-local"
                 value={project.deadline}
-                onChange={(e) => setProject((p) => ({ ...p, deadline: e.target.value }))}
+                onChange={(e) =>
+                  setProject((p) => ({ ...p, deadline: e.target.value }))
+                }
               />
             </div>
             {error && <div className="cr-error">{error}</div>}
@@ -203,7 +235,9 @@ export default function CreateRoom({ onBack, onDone }) {
               <div className="az-card-emoji">🎭</div>
               <div>
                 <div className="az-card-title">역할 설정</div>
-                <div className="az-card-desc">프로젝트에 필요한 역할을 추가하세요</div>
+                <div className="az-card-desc">
+                  프로젝트에 필요한 역할을 추가하세요
+                </div>
               </div>
             </div>
 
@@ -216,7 +250,9 @@ export default function CreateRoom({ onBack, onDone }) {
                 >
                   <div className="role-card-top">
                     <span className="role-card-name">{r.name}</span>
-                    <button className="del-btn" onClick={() => removeRole(i)}>×</button>
+                    <button className="del-btn" onClick={() => removeRole(i)}>
+                      ×
+                    </button>
                   </div>
                   <div className="role-card-meta">
                     <span>업무량 {r.workload}h</span>
@@ -234,7 +270,9 @@ export default function CreateRoom({ onBack, onDone }) {
                     className="field-input"
                     placeholder="ex) 백엔드, 기획자, 디자이너"
                     value={roleForm.name}
-                    onChange={(e) => setRoleForm((p) => ({ ...p, name: e.target.value }))}
+                    onChange={(e) =>
+                      setRoleForm((p) => ({ ...p, name: e.target.value }))
+                    }
                   />
                 </div>
                 <div className="field">
@@ -244,25 +282,38 @@ export default function CreateRoom({ onBack, onDone }) {
                     type="number"
                     min={1}
                     value={roleForm.workload}
-                    onChange={(e) => setRoleForm((p) => ({ ...p, workload: Number(e.target.value) }))}
+                    onChange={(e) =>
+                      setRoleForm((p) => ({
+                        ...p,
+                        workload: Number(e.target.value),
+                      }))
+                    }
                   />
                 </div>
               </div>
               <div className="field" style={{ marginBottom: 12 }}>
-                <label className="field-label">설명 <span className="hint">(선택)</span></label>
+                <label className="field-label">
+                  설명 <span className="hint">(선택)</span>
+                </label>
                 <input
                   className="field-input"
                   placeholder="역할 설명"
                   value={roleForm.description}
-                  onChange={(e) => setRoleForm((p) => ({ ...p, description: e.target.value }))}
+                  onChange={(e) =>
+                    setRoleForm((p) => ({ ...p, description: e.target.value }))
+                  }
                 />
               </div>
-              <button className="btn-add-full" onClick={addRole}>+ 역할 추가</button>
+              <button className="btn-add-full" onClick={addRole}>
+                + 역할 추가
+              </button>
             </div>
 
             {error && <div className="cr-error">{error}</div>}
             <div className="az-actions">
-              <button className="btn-back" onClick={() => setStep(1)}>← 이전</button>
+              <button className="btn-back" onClick={() => setStep(1)}>
+                ← 이전
+              </button>
               <button
                 className="btn-next"
                 disabled={roles.length === 0}
@@ -281,19 +332,38 @@ export default function CreateRoom({ onBack, onDone }) {
               <div className="az-card-emoji">⚖️</div>
               <div>
                 <div className="az-card-title">가중치 설정</div>
-                <div className="az-card-desc">역할 배정 시 무엇을 더 중요하게 볼까요?</div>
+                <div className="az-card-desc">
+                  역할 배정 시 무엇을 더 중요하게 볼까요?
+                </div>
               </div>
             </div>
 
             <div className="weight-cards">
               {[
-                { key: "skill", label: "역량", emoji: "💪", desc: "그 역할을 얼마나 잘 하는가" },
-                { key: "time", label: "가용시간", emoji: "⏰", desc: "투자 가능한 시간이 많은가" },
-                { key: "preference", label: "선호도", emoji: "❤️", desc: "그 역할을 하고 싶어 하는가" },
+                {
+                  key: "skill",
+                  label: "역량",
+                  emoji: "💪",
+                  desc: "그 역할을 얼마나 잘 하는가",
+                },
+                {
+                  key: "time",
+                  label: "가용시간",
+                  emoji: "⏰",
+                  desc: "투자 가능한 시간이 많은가",
+                },
+                {
+                  key: "preference",
+                  label: "선호도",
+                  emoji: "❤️",
+                  desc: "그 역할을 하고 싶어 하는가",
+                },
               ].map(({ key, label, emoji, desc }) => (
                 <div className="weight-card" key={key}>
                   <div className="weight-card-top">
-                    <span>{emoji} {label}</span>
+                    <span>
+                      {emoji} {label}
+                    </span>
                     <span className="weight-pct">{pct(weights[key])}%</span>
                   </div>
                   <input
@@ -302,25 +372,39 @@ export default function CreateRoom({ onBack, onDone }) {
                     max={10}
                     value={weights[key]}
                     onChange={(e) =>
-                      setWeights((p) => ({ ...p, [key]: Number(e.target.value) }))
+                      setWeights((p) => ({
+                        ...p,
+                        [key]: Number(e.target.value),
+                      }))
                     }
                   />
-                  <div className="weight-bar" style={{ width: `${pct(weights[key])}%` }} />
-                  <div style={{ fontSize: 12, color: "#9ca3af", marginTop: 6 }}>{desc}</div>
+                  <div
+                    className="weight-bar"
+                    style={{ width: `${pct(weights[key])}%` }}
+                  />
+                  <div style={{ fontSize: 12, color: "#9ca3af", marginTop: 6 }}>
+                    {desc}
+                  </div>
                 </div>
               ))}
             </div>
 
             {error && <div className="cr-error">{error}</div>}
             <div className="az-actions" style={{ marginTop: 28 }}>
-              <button className="btn-back" onClick={() => setStep(2)}>← 이전</button>
+              <button className="btn-back" onClick={() => setStep(2)}>
+                ← 이전
+              </button>
               <button
                 className="btn-next"
                 disabled={loading || totalW === 0}
                 onClick={submit}
               >
                 {loading ? (
-                  <div className="loading-dots"><span /><span /><span /></div>
+                  <div className="loading-dots">
+                    <span />
+                    <span />
+                    <span />
+                  </div>
                 ) : (
                   "방 만들기 →"
                 )}

@@ -151,6 +151,20 @@
   line-height: 1.7;
 }
 
+.btn-reassign {
+  padding: 13px 24px;
+  background: none;
+  border: 1.5px solid #2563eb;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #2563eb;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.btn-reassign:hover { background: #eff6ff; }
+
 .btn-reset {
   padding: 13px 24px;
   background: none;
