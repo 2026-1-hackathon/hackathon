@@ -3,6 +3,8 @@ package teamguard.hackathon.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import teamguard.hackathon.dto.AssignmentResponse;
+import teamguard.hackathon.dto.PredictionResponse;
+import teamguard.hackathon.service.AiService;
 import teamguard.hackathon.service.AssignmentService;
 
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
 public class AssignmentController {
 
     private final AssignmentService assignmentService;
+    private final AiService aiService;
 
     @PostMapping("/{roomId}/assignments")
     public List<AssignmentResponse> assignRoles(
@@ -26,5 +29,12 @@ public class AssignmentController {
             @PathVariable Long roomId
     ) {
         return assignmentService.getAssignments(roomId);
+    }
+
+    @GetMapping("/{roomId}/predict")
+    public PredictionResponse predict(
+            @PathVariable Long roomId
+    ) {
+        return aiService.predict(roomId);
     }
 }
