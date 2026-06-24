@@ -8,7 +8,10 @@ import org.springframework.web.server.ResponseStatusException;
 import teamguard.hackathon.domain.*;
 import teamguard.hackathon.dto.CreateMemberRequest;
 import teamguard.hackathon.repository.*;
+import org.springframework.transaction.annotation.Transactional;
+import teamguard.hackathon.dto.MemberResponse;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -86,5 +89,52 @@ public class MemberController {
                 "name", member.getName(),
                 "roomId", room.getId()
         );
+    }
+    @GetMapping("/{roomId}/members")
+    @Transactional(readOnly = true)
+    public List<MemberResponse> getMembers(
+            @PathVariable Long roomId
+    ) {
+        if (!roomRepository.existsById(roomId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "방을 찾을 수 없습니다."
+            );
+        }
+
+        return memberRepository.findByRoomIdOrderByIdAsc(roomId)
+                .stream()
+                .map(member -> {
+                    List<MemberResponse.SkillResponse> skills =
+                            memberSkillRepository.findByMemberId(member.getId())
+                                    .stream()
+                                    .map(skill -> new MemberResponse.SkillResponse(
+                                            skill.getSkillName(),
+                                            skill.getLevel()
+                                    ))
+                                    .toList();
+
+                    List<MemberResponse.PreferenceResponse> preferences =
+                            memberPreferenceRepository
+                                    .findByMemberId(member.getId())
+                                    .stream()
+                                    .map(preference ->
+                                            new MemberResponse.PreferenceResponse(
+                                                    preference.getRole().getId(),
+                                                    preference.getRole().getName(),
+                                                    preference.getScore()
+                                            )
+                                    )
+                                    .toList();
+
+                    return new MemberResponse(
+                            member.getId(),
+                            member.getName(),
+                            member.getAvailableHours(),
+                            skills,
+                            preferences
+                    );
+                })
+                .toList();
     }
 }
