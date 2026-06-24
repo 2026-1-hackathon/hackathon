@@ -536,7 +536,7 @@ return (
                                                     )
                                                 }
                                             >
-                                                <option value="NOT_STARTED">
+                                                <option value="TODO">
                                                     아직 안 함
                                                 </option>
 

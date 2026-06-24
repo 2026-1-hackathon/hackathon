@@ -90,6 +90,9 @@ export default function JoinRoom({ onBack, onDashboard }) {
       topic: room.topic,
       deadline: room.deadline,
       roles: room.roles,
+      skillWeight: room.skillWeight,
+      timeWeight: room.timeWeight,
+      preferenceWeight: room.preferenceWeight,
     });
   };
 

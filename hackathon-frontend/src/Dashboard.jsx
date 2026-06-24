@@ -4,48 +4,55 @@ import { api } from "./api.js";
 
 const COLORS = ["#6366f1", "#0ea5e9", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6"];
 
-const STATUS_NEXT = { TODO: "IN_PROGRESS", IN_PROGRESS: "DONE", DONE: "TODO" };
-const STATUS_LABEL = { TODO: "대기", IN_PROGRESS: "진행중", DONE: "완료" };
-const STATUS_CLS = { TODO: "st-todo", IN_PROGRESS: "st-doing", DONE: "st-done" };
-
 export default function Dashboard({ roomData, onBack }) {
-  const { roomId, inviteCode, title, roles = [] } = roomData;
+  const {
+    roomId, inviteCode, title, topic,
+    roles = [],
+    deadline: roomDeadline,
+    skillWeight = 0, timeWeight = 0, preferenceWeight = 0,
+  } = roomData;
+
+  const totalW = (skillWeight + timeWeight + preferenceWeight) || 1;
+  const wPct = (v) => Math.round((v / totalW) * 100);
+
+  const defaultDeadline = roomDeadline ? roomDeadline.slice(0, 16) : "";
+
+  const daysLeft = roomDeadline
+    ? Math.ceil((new Date(roomDeadline) - new Date()) / (1000 * 60 * 60 * 24))
+    : null;
 
   const [members, setMembers] = useState([]);
   const [assignments, setAssignments] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [aiReport, setAiReport] = useState("");
-  const [tab, setTab] = useState("members");
+  const [tab, setTab] = useState("info");
   const [assigning, setAssigning] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [taskLoading, setTaskLoading] = useState(false);
   const [error, setError] = useState("");
+  const [taskError, setTaskError] = useState("");
   const [copied, setCopied] = useState(false);
   const [taskForm, setTaskForm] = useState({
     roleId: roles[0]?.roleId ?? "",
     title: "",
-    estimatedHours: 2,
-    deadline: "",
+    deadline: defaultDeadline,
   });
 
+  // 각 API 독립적으로 로드 — 하나 실패해도 나머지는 정상 동작
   const loadAll = useCallback(async () => {
-    try {
-      const [m, a, t] = await Promise.all([
-        api(`/api/rooms/${roomId}/members`),
-        api(`/api/rooms/${roomId}/assignments`),
-        api(`/api/rooms/${roomId}/tasks`),
-      ]);
-      setMembers(m);
-      setAssignments(a);
-      setTasks(t);
-    } catch (e) {
-      console.error("load error:", e.message);
-    }
+    const [m, a, t] = await Promise.all([
+      api(`/api/rooms/${roomId}/members`).catch(() => []),
+      api(`/api/rooms/${roomId}/assignments`).catch(() => []),
+      api(`/api/rooms/${roomId}/tasks`).catch(() => []),
+    ]);
+    setMembers(m);
+    setAssignments(a);
+    setTasks(t);
   }, [roomId]);
 
   useEffect(() => { loadAll(); }, [loadAll]);
 
-  // poll members every 5s until assignments exist
+  // 배정 전까지 5초마다 폴링
   useEffect(() => {
     if (assignments.length > 0) return;
     const id = setInterval(loadAll, 5000);
@@ -68,9 +75,11 @@ export default function Dashboard({ roomData, onBack }) {
 
   const addTask = async (e) => {
     e.preventDefault();
-    if (!taskForm.title.trim() || !taskForm.deadline || !taskForm.roleId) return;
+    setTaskError("");
+    if (!taskForm.title.trim()) { setTaskError("업무 제목을 입력해주세요."); return; }
+    if (!taskForm.roleId)       { setTaskError("역할을 선택해주세요."); return; }
+    if (!taskForm.deadline)     { setTaskError("기한을 선택해주세요."); return; }
     setTaskLoading(true);
-    setError("");
     try {
       const deadline = taskForm.deadline.length === 16
         ? taskForm.deadline + ":00"
@@ -80,27 +89,26 @@ export default function Dashboard({ roomData, onBack }) {
         body: JSON.stringify({
           title: taskForm.title,
           description: "",
-          estimatedHours: Number(taskForm.estimatedHours),
+          estimatedHours: 1,
           deadline,
         }),
       });
       setTasks((prev) => [...prev, t]);
-      setTaskForm((p) => ({ ...p, title: "", estimatedHours: 2, deadline: "" }));
-    } catch (e) {
-      setError(e.message);
+      setTaskForm((p) => ({ ...p, title: "" }));
+    } catch (err) {
+      setTaskError(err.message);
     } finally {
       setTaskLoading(false);
     }
   };
 
-  const cycleStatus = async (taskId, currentStatus) => {
-    const next = STATUS_NEXT[currentStatus];
+  const changeStatus = async (taskId, next) => {
     try {
       const updated = await api(`/api/tasks/${taskId}/status`, {
         method: "PATCH",
         body: JSON.stringify({ status: next }),
       });
-      setTasks((prev) => prev.map((t) => (t.taskId === taskId ? updated : t)));
+      setTasks((prev) => prev.map((t) => t.taskId === taskId ? updated : t));
     } catch (e) {
       setError(e.message);
     }
@@ -125,12 +133,9 @@ export default function Dashboard({ roomData, onBack }) {
       const total = tasks.length;
       const done = tasks.filter((t) => t.status === "DONE").length;
       const overdue = tasks.filter((t) => t.overdue).length;
-      const taskText =
-        total > 0
-          ? tasks
-              .map((t) => `[${t.roleName}] ${t.title}: ${t.statusLabel}${t.overdue ? "(지연)" : ""}`)
-              .join(", ")
-          : "등록된 업무 없음";
+      const taskText = total > 0
+        ? tasks.map((t) => `[${t.roleName ?? ""}] ${t.title}: ${t.status}${t.overdue ? "(지연)" : ""}`).join(", ")
+        : "등록된 업무 없음";
 
       const prompt = `팀 프로젝트 "${title}"의 현황을 분석해주세요.
 
@@ -150,7 +155,7 @@ ${taskText}
         method: "POST",
         body: JSON.stringify({ message: prompt }),
       });
-      setAiReport(res.reply);
+      setAiReport(res.reply ?? res);
       setTab("ai");
     } catch (e) {
       setError(e.message);
@@ -165,24 +170,26 @@ ${taskText}
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // group tasks by role name
+  // 역할별 업무 그룹
   const tasksByRole = {};
   roles.forEach((r) => { tasksByRole[r.name] = []; });
   tasks.forEach((t) => {
-    if (!tasksByRole[t.roleName]) tasksByRole[t.roleName] = [];
-    tasksByRole[t.roleName].push(t);
+    const key = t.roleName ?? "기타";
+    if (!tasksByRole[key]) tasksByRole[key] = [];
+    tasksByRole[key].push(t);
   });
 
   const totalTasks = tasks.length;
   const doneTasks = tasks.filter((t) => t.status === "DONE").length;
-  const overdueCount = tasks.filter((t) => t.overdue).length;
+  const overdueCount = tasks.filter((t) => t.overdue && t.status !== "DONE").length;
   const progress = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
 
   const TABS = [
-    { id: "members", label: `팀원 (${members.length})` },
+    { id: "info",        label: "프로젝트 정보" },
+    { id: "members",     label: `팀원 (${members.length})` },
     { id: "assignments", label: `역할 배정${assignments.length > 0 ? " ✓" : ""}` },
-    { id: "tasks", label: `업무 관리 (${totalTasks})` },
-    { id: "ai", label: "AI 리포트" },
+    { id: "tasks",       label: `업무 관리 (${doneTasks}/${totalTasks})` },
+    { id: "ai",          label: "AI 리포트" },
   ];
 
   return (
@@ -223,12 +230,12 @@ ${taskText}
         </div>
         <div className="db-stat">
           <span className="db-stat-num">{totalTasks > 0 ? `${progress}%` : "—"}</span>
-          <span className="db-stat-lbl">업무 진행률</span>
+          <span className="db-stat-lbl">진행률</span>
         </div>
         {overdueCount > 0 && (
-          <div className="db-stat" style={{ color: "#dc2626" }}>
-            <span className="db-stat-num">{overdueCount}</span>
-            <span className="db-stat-lbl">지연 업무</span>
+          <div className="db-stat">
+            <span className="db-stat-num" style={{ color: "#dc2626" }}>{overdueCount}</span>
+            <span className="db-stat-lbl">지연</span>
           </div>
         )}
       </div>
@@ -249,6 +256,68 @@ ${taskText}
       {error && <div className="db-error">{error}</div>}
 
       <div className="db-body">
+
+        {/* ── 프로젝트 정보 탭 ── */}
+        {tab === "info" && (
+          <div className="db-info-grid">
+            {/* 기본 정보 */}
+            <div className="db-info-card">
+              <div className="db-info-card-title">📋 프로젝트 개요</div>
+              <div className="db-info-row">
+                <span className="db-info-label">주제</span>
+                <span className="db-info-value">{topic || "—"}</span>
+              </div>
+              <div className="db-info-row">
+                <span className="db-info-label">마감일</span>
+                <span className="db-info-value">
+                  {roomDeadline
+                    ? new Date(roomDeadline).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" })
+                    : "—"}
+                </span>
+              </div>
+              {daysLeft !== null && (
+                <div className={`db-deadline-badge ${daysLeft <= 3 ? "danger" : daysLeft <= 7 ? "warn" : "ok"}`}>
+                  {daysLeft > 0 ? `D-${daysLeft}` : daysLeft === 0 ? "오늘 마감" : `D+${Math.abs(daysLeft)} 초과`}
+                </div>
+              )}
+            </div>
+
+            {/* 배정 가중치 */}
+            <div className="db-info-card">
+              <div className="db-info-card-title">⚖️ 역할 배정 가중치</div>
+              {[
+                { label: "🎯 역량", value: skillWeight, pct: wPct(skillWeight) },
+                { label: "⏰ 가능 시간", value: timeWeight, pct: wPct(timeWeight) },
+                { label: "⭐ 선호도", value: preferenceWeight, pct: wPct(preferenceWeight) },
+              ].map(({ label, pct }) => (
+                <div key={label} className="db-weight-row">
+                  <span className="db-weight-label">{label}</span>
+                  <div className="db-weight-bar">
+                    <div style={{ width: `${pct}%`, background: "#2563eb" }} />
+                  </div>
+                  <span className="db-weight-pct">{pct}%</span>
+                </div>
+              ))}
+              {(skillWeight + timeWeight + preferenceWeight) === 0 && (
+                <div style={{ fontSize: 13, color: "#9ca3af" }}>가중치 정보가 없습니다</div>
+              )}
+            </div>
+
+            {/* 역할 목록 */}
+            <div className="db-info-card" style={{ gridColumn: "1 / -1" }}>
+              <div className="db-info-card-title">🗂 역할 목록</div>
+              <div className="db-role-chips">
+                {roles.map((r, i) => (
+                  <div key={r.roleId} className="db-role-chip" style={{ borderColor: COLORS[i % COLORS.length], color: COLORS[i % COLORS.length] }}>
+                    {r.name}
+                    {r.workload ? <span className="db-role-chip-sub"> · {r.workload}h</span> : null}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ── 팀원 탭 ── */}
         {tab === "members" && (
           <div>
@@ -276,10 +345,7 @@ ${taskText}
                 {members.map((m, i) => (
                   <div key={m.memberId} className="db-member-card">
                     <div className="db-member-top">
-                      <div
-                        className="db-avatar"
-                        style={{ background: COLORS[i % COLORS.length] }}
-                      >
+                      <div className="db-avatar" style={{ background: COLORS[i % COLORS.length] }}>
                         {m.name.charAt(0)}
                       </div>
                       <div>
@@ -288,7 +354,7 @@ ${taskText}
                       </div>
                     </div>
                     <div className="db-skill-chips">
-                      {m.skills.map((s) => (
+                      {(m.skills ?? []).map((s) => (
                         <div key={s.skillName} className="db-skill-chip">
                           <span>{s.skillName}</span>
                           <span className="db-skill-stars">{"★".repeat(s.level)}</span>
@@ -305,6 +371,12 @@ ${taskText}
                 역할 배정 실행에는 팀원 {roles.length}명 이상이 필요합니다 (현재 {members.length}명)
               </div>
             )}
+
+            {assignments.length > 0 && (
+              <div className="db-reassign-notice">
+                💡 <strong>재배정이 필요하다면</strong> 팀원들이 초대코드 <strong>{inviteCode}</strong>로 다시 참여해 정보를 업데이트한 뒤, 역할 배정 탭에서 재배정하세요.
+              </div>
+            )}
           </div>
         )}
 
@@ -314,10 +386,10 @@ ${taskText}
             <div className="db-sec-head">
               <div>
                 <div className="db-sec-title">역할 배정 결과</div>
-                <div className="db-sec-sub">역량·시간·선호도를 가중 합산한 MCDM 알고리즘 결과입니다</div>
+                <div className="db-sec-sub">역량·시간·선호도를 가중 합산한 자동 배정 결과입니다</div>
               </div>
-              <button className="db-btn-ghost" disabled={assigning} onClick={runAssignment}>
-                {assigning ? "배정 중…" : "재배정"}
+              <button className="db-btn-ghost" onClick={() => setTab("members")}>
+                팀원 정보 확인 후 재배정
               </button>
             </div>
 
@@ -327,20 +399,14 @@ ${taskText}
               <div className="db-assign-list">
                 {assignments.map((a, i) => (
                   <div key={a.assignmentId} className="db-assign-card">
-                    <div
-                      className="db-avatar"
-                      style={{ background: COLORS[i % COLORS.length] }}
-                    >
+                    <div className="db-avatar" style={{ background: COLORS[i % COLORS.length] }}>
                       {a.memberName.charAt(0)}
                     </div>
                     <div className="db-assign-info">
                       <div className="db-assign-name">{a.memberName}</div>
                       <div
                         className="db-assign-role"
-                        style={{
-                          background: COLORS[i % COLORS.length] + "22",
-                          color: COLORS[i % COLORS.length],
-                        }}
+                        style={{ background: COLORS[i % COLORS.length] + "22", color: COLORS[i % COLORS.length] }}
                       >
                         {a.roleName}
                       </div>
@@ -351,20 +417,12 @@ ${taskText}
                       </div>
                     </div>
                     <div className="db-assign-score-col">
-                      <div
-                        className="db-assign-total"
-                        style={{ color: COLORS[i % COLORS.length] }}
-                      >
+                      <div className="db-assign-total" style={{ color: COLORS[i % COLORS.length] }}>
                         {Math.round(a.totalScore)}
                       </div>
                       <div className="db-assign-score-lbl">적합도</div>
                       <div className="db-score-bar">
-                        <div
-                          style={{
-                            width: `${a.totalScore}%`,
-                            background: COLORS[i % COLORS.length],
-                          }}
-                        />
+                        <div style={{ width: `${a.totalScore}%`, background: COLORS[i % COLORS.length] }} />
                       </div>
                     </div>
                   </div>
@@ -377,15 +435,22 @@ ${taskText}
         {/* ── 업무 관리 탭 ── */}
         {tab === "tasks" && (
           <div>
-            <div className="db-sec-head">
-              <div>
-                <div className="db-sec-title">업무 관리</div>
-                <div className="db-sec-sub">역할별 할일을 등록하고 상태를 클릭해 변경하세요</div>
+            {/* 전체 진행률 */}
+            {totalTasks > 0 && (
+              <div className="db-overall-prog">
+                <div className="db-op-left">
+                  <div className="db-op-label">전체 진행률</div>
+                  <div className="db-op-bar">
+                    <div style={{ width: `${progress}%` }} />
+                  </div>
+                  <div className="db-op-sub">{doneTasks}개 완료 / {totalTasks}개 전체</div>
+                </div>
+                <div className="db-op-pct">{progress}%</div>
               </div>
-            </div>
+            )}
 
             {/* 업무 추가 폼 */}
-            <form className="db-task-form" onSubmit={addTask}>
+            <form className="db-task-form" onSubmit={addTask} noValidate>
               <select
                 className="db-task-select"
                 value={taskForm.roleId}
@@ -397,80 +462,68 @@ ${taskText}
               </select>
               <input
                 className="db-task-input"
-                placeholder="업무 제목"
+                placeholder="업무 제목을 입력하세요"
                 value={taskForm.title}
                 onChange={(e) => setTaskForm((p) => ({ ...p, title: e.target.value }))}
               />
               <input
-                className="db-task-input"
-                type="number"
-                min={1}
-                placeholder="예상(h)"
-                value={taskForm.estimatedHours}
-                onChange={(e) => setTaskForm((p) => ({ ...p, estimatedHours: e.target.value }))}
-                style={{ width: 90 }}
-              />
-              <input
-                className="db-task-input"
+                className="db-task-input db-task-date"
                 type="datetime-local"
                 value={taskForm.deadline}
                 onChange={(e) => setTaskForm((p) => ({ ...p, deadline: e.target.value }))}
-                style={{ width: 180 }}
               />
               <button type="submit" className="db-btn-primary" disabled={taskLoading}>
-                + 추가
+                {taskLoading ? "…" : "+ 추가"}
               </button>
             </form>
+            {taskError && <div className="db-task-error">{taskError}</div>}
 
             {/* 역할별 업무 목록 */}
             {totalTasks === 0 ? (
-              <div className="db-empty">아직 등록된 업무가 없습니다</div>
+              <div className="db-empty">위 폼으로 첫 번째 업무를 추가하세요</div>
             ) : (
               Object.entries(tasksByRole)
                 .filter(([, ts]) => ts.length > 0)
                 .map(([roleName, roleTasks], ri) => {
-                  const doneCount = roleTasks.filter((t) => t.status === "DONE").length;
-                  const pct = Math.round((doneCount / roleTasks.length) * 100);
+                  const dc = roleTasks.filter((t) => t.status === "DONE").length;
+                  const pct = Math.round((dc / roleTasks.length) * 100);
                   return (
                     <div key={roleName} className="db-task-group">
                       <div className="db-task-group-head">
-                        <div
-                          className="db-task-group-dot"
-                          style={{ background: COLORS[ri % COLORS.length] }}
-                        />
+                        <div className="db-task-group-dot" style={{ background: COLORS[ri % COLORS.length] }} />
                         <span className="db-task-group-name">{roleName}</span>
-                        <span className="db-task-group-cnt">{doneCount}/{roleTasks.length}</span>
+                        <span className="db-task-group-cnt">{dc}/{roleTasks.length}</span>
                         <div className="db-task-prog-wrap">
                           <div className="db-task-prog-bar">
-                            <div
-                              style={{
-                                width: `${pct}%`,
-                                background: COLORS[ri % COLORS.length],
-                              }}
-                            />
+                            <div style={{ width: `${pct}%`, background: COLORS[ri % COLORS.length] }} />
                           </div>
                           <span className="db-task-prog-pct">{pct}%</span>
                         </div>
                       </div>
+
                       <div className="db-task-list">
                         {roleTasks.map((t) => (
                           <div
                             key={t.taskId}
-                            className={`db-task-item ${t.overdue ? "overdue" : ""}`}
+                            className={`db-task-item${t.status === "DONE" ? " done" : ""}${t.overdue && t.status !== "DONE" ? " overdue" : ""}`}
                           >
-                            <button
-                              className={`db-status-btn ${STATUS_CLS[t.status]}`}
-                              onClick={() => cycleStatus(t.taskId, t.status)}
-                              title="클릭해서 상태 변경"
+                            <select
+                              className={`db-status-select st-${t.status?.toLowerCase()}`}
+                              value={t.status}
+                              onChange={(e) => changeStatus(t.taskId, e.target.value)}
                             >
-                              {STATUS_LABEL[t.status]}
-                            </button>
+                              <option value="TODO">○ 미완료</option>
+                              <option value="IN_PROGRESS">→ 진행중</option>
+                              <option value="DONE">✓ 완료</option>
+                            </select>
                             <span className="db-task-title">{t.title}</span>
-                            <span className="db-task-meta">{t.estimatedHours}h</span>
-                            {t.overdue && <span className="db-task-overdue">지연!</span>}
+                            {t.overdue && t.status !== "DONE" && (
+                              <span className="db-task-overdue">지연!</span>
+                            )}
                             <button
                               className="db-task-del"
                               onClick={() => deleteTask(t.taskId)}
+                              type="button"
                             >
                               ×
                             </button>
@@ -507,12 +560,11 @@ ${taskText}
                   : "상단의 '리포트 생성' 버튼을 눌러주세요"}
               </div>
             ) : (
-              <div className="db-ai-report">
-                {aiReport}
-              </div>
+              <div className="db-ai-report">{aiReport}</div>
             )}
           </div>
         )}
+
       </div>
     </div>
   );

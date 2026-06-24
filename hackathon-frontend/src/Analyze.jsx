@@ -133,7 +133,7 @@ function Step1({ project, setProject, onNext }) {
           {[
             { key: "skill", label: "역량", emoji: "🎯" },
             { key: "time", label: "가능 시간", emoji: "⏰" },
-            { key: "preference", label: "선호도", emoji: "💙" },
+            { key: "preference", label: "선호도", emoji: "⭐" },
           ].map(({ key, label, emoji }) => (
             <div key={key} className="weight-card">
               <div className="weight-card-top">
@@ -384,7 +384,7 @@ function Step3({ roles, members, setMembers, onNext, onBack, loading }) {
 
 // ── Step 4 ────────────────────────────────────────────────────────
 
-function Step4({ result, projectName, inviteCode, onReset, onOpenTasks }) {
+function Step4({ result, projectName, inviteCode, onReset, onReassign, onOpenTasks }) {
   const { assignments, prediction } = result;
 
   const maxRisk = Math.max(prediction.conflictRisk, prediction.scheduleRisk, prediction.deadlineRisk);
@@ -409,7 +409,7 @@ function Step4({ result, projectName, inviteCode, onReset, onOpenTasks }) {
       {/* 역할 배정 결과 */}
       <div className="az-card">
         <h3 className="section-title">📋 역할 배정 결과</h3>
-        <p className="section-sub">역량·가능 시간·선호도 가중치 기반 자동 배정 (백엔드 MCDM)</p>
+        <p className="section-sub">역량·가능 시간·선호도 가중치 기반 자동 배정</p>
         <div className="assign-cards">
           {assignments.map((a, i) => (
             <div key={a.assignmentId ?? i} className="assign-card">
@@ -496,7 +496,8 @@ function Step4({ result, projectName, inviteCode, onReset, onOpenTasks }) {
       )}
 
       <div className="result-bottom-actions">
-        <button className="btn-reset" onClick={onReset}>↺ 새로 분석하기</button>
+        <button className="btn-reset" onClick={onReset}>↺ 처음부터</button>
+        <button className="btn-reassign" onClick={onReassign}>팀원 정보 수정 후 재배정</button>
         <button className="btn-task-open" onClick={onOpenTasks}>역할별 업무 관리 →</button>
       </div>
     </div>
@@ -611,6 +612,15 @@ export default function Analyze({ onBack }) {
     setProject({ name: "", topic: "", deadline: "", weights: { skill: 5, time: 3, preference: 2 } });
   };
 
+  // 프로젝트·역할 유지, 팀원만 초기화 → 3단계로 이동
+  const reAssign = () => {
+    setStep(3);
+    setMembers([]);
+    setResult(null);
+    setWorkspace(null);
+    setError("");
+  };
+
   return (
     <div className="az-page">
       <div className="az-header">
@@ -651,6 +661,7 @@ export default function Analyze({ onBack }) {
                 projectName={project.name}
                 inviteCode={workspace.inviteCode}
                 onReset={reset}
+                onReassign={reAssign}
                 onOpenTasks={() => setActiveView("tasks")}
               />
             )}
