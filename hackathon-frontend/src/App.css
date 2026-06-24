@@ -1,120 +1,406 @@
+/* ── 기본 ── */
 .page {
-  width: min(1200px, calc(100% - 32px));
+  min-height: 100vh;
+  color: #111;
+}
+
+.container {
+  max-width: 1040px;
   margin: 0 auto;
-  padding: 32px 0 80px;
+  padding: 0 24px;
 }
 
-header {
-  margin-bottom: 24px;
+/* ── 네비 ── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-section {
-  margin-bottom: 24px;
-  padding: 20px;
-  border: 1px solid #cccccc;
-  border-radius: 8px;
-  background: white;
-}
-
-form {
-  display: grid;
-  gap: 16px;
-}
-
-label {
-  display: grid;
-  gap: 6px;
-}
-
-input,
-select,
-button {
-  padding: 9px 10px;
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.row {
-  display: flex;
-  gap: 12px;
-  align-items: end;
-  flex-wrap: wrap;
-}
-
-.row > label,
-.row > input {
-  flex: 1;
-}
-
-.role-editor {
-  display: grid;
-  grid-template-columns: 1fr 120px 2fr auto;
-  gap: 8px;
-}
-
-.section-header {
+.nav-inner {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.nav-logo {
+  font-size: 17px;
+  font-weight: 800;
+  color: #111;
+  letter-spacing: -0.5px;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #555;
+  font-size: 14px;
+}
+.nav-link:hover { color: #111; }
+
+.nav-cta {
+  text-decoration: none;
+  background: #111;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 8px;
+  transition: background 0.15s;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.nav-cta:hover { background: #333; }
+
+/* ── 히어로 ── */
+.hero {
+  padding: 80px 24px 72px;
+  max-width: 1040px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 64px;
+}
+
+.hero-content { flex: 1; }
+
+.hero-tag {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 18px;
+}
+
+.hero-title {
+  font-size: 52px;
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -2px;
+  color: #111;
+  margin-bottom: 22px;
+}
+
+.hero-desc {
+  font-size: 16px;
+  color: #555;
+  line-height: 1.8;
+  margin-bottom: 36px;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
   gap: 16px;
 }
 
-.result-box {
-  margin-top: 16px;
-  padding: 16px;
-  border: 1px solid #dddddd;
-  background: #fafafa;
+.btn-main {
+  display: inline-block;
+  text-decoration: none;
+  background: #2563eb;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 14px 28px;
+  border-radius: 10px;
+  transition: background 0.15s, transform 0.15s;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn-main:hover { background: #1d4ed8; transform: translateY(-1px); }
+.btn-lg { font-size: 17px; padding: 16px 36px; }
+
+.btn-sub {
+  text-decoration: none;
+  color: #555;
+  font-size: 14px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 1px;
+  transition: color 0.15s;
+}
+.btn-sub:hover { color: #111; }
+
+/* ── 목업 카드 ── */
+.hero-mockup {
+  flex-shrink: 0;
+  width: 360px;
 }
 
-.message {
-  margin-bottom: 16px;
-  padding: 12px;
+.mockup-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.09);
+  overflow: hidden;
+}
+
+.mockup-header {
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 11px; height: 11px;
+  border-radius: 50%;
+}
+.dot.red    { background: #fc5f57; }
+.dot.yellow { background: #fdbc2c; }
+.dot.green  { background: #33c648; }
+
+.mockup-title {
+  font-size: 12px;
+  color: #888;
+  margin-left: 8px;
+}
+
+.mockup-body { padding: 16px; }
+
+.member-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+.member-row:last-of-type { border-bottom: none; }
+
+.member-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+  width: 56px;
+  flex-shrink: 0;
+}
+
+.member-role {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 9px;
   border-radius: 6px;
+  flex: 1;
+}
+.role-dev    { background: #dbeafe; color: #1d4ed8; }
+.role-design { background: #fce7f3; color: #be185d; }
+.role-plan   { background: #d1fae5; color: #065f46; }
+
+.member-time {
+  font-size: 12px;
+  color: #9ca3af;
+  flex-shrink: 0;
 }
 
-.message.success {
-  background: #e9f8ed;
-  border: 1px solid #73bd83;
+.mockup-risk {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
 }
 
-.message.error {
-  background: #fff0f0;
-  border: 1px solid #e08a8a;
-  white-space: pre-wrap;
+.risk-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+.risk-badge.warn { background: #fff7ed; color: #c2410c; }
+.risk-badge.ok   { background: #f0fdf4; color: #15803d; }
+
+/* ── 공감 섹션 ── */
+.pain-section {
+  background: #f9fafb;
+  padding: 80px 0;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
+.pain-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #111;
+  margin-bottom: 40px;
+  letter-spacing: -0.5px;
 }
 
-th,
-td {
-  padding: 10px;
-  border: 1px solid #cccccc;
-  text-align: left;
-  vertical-align: top;
+.pain-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
 }
 
-th {
-  background: #f4f4f4;
+.pain-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 28px 24px;
 }
 
-@media (max-width: 720px) {
-  .role-editor {
-    grid-template-columns: 1fr;
-  }
+.pain-emoji {
+  font-size: 28px;
+  margin-bottom: 14px;
+}
 
-  table {
-    display: block;
-    overflow-x: auto;
-  }
+.pain-card h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 10px;
+  line-height: 1.45;
+}
+
+.pain-card p {
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.pain-solve {
+  font-size: 13px;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+/* ── 사용법 ── */
+.how-section {
+  padding: 80px 0;
+  background: #fff;
+}
+
+.how-head {
+  margin-bottom: 52px;
+}
+
+.how-head h2 {
+  font-size: 30px;
+  font-weight: 800;
+  color: #111;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.how-head p {
+  font-size: 15px;
+  color: #9ca3af;
+}
+
+.how-steps {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.how-step {
+  flex: 1;
+  padding: 28px 24px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+}
+
+.step-circle {
+  width: 36px;
+  height: 36px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.how-step h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 8px;
+}
+
+.how-step p {
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.7;
+}
+
+.how-arrow {
+  font-size: 20px;
+  color: #d1d5db;
+  padding-top: 50px;
+  flex-shrink: 0;
+}
+
+/* ── CTA ── */
+.cta-section {
+  padding: 80px 0;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+}
+
+.cta-inner {
+  text-align: center;
+}
+
+.cta-inner h2 {
+  font-size: 34px;
+  font-weight: 900;
+  color: #111;
+  margin-bottom: 12px;
+  letter-spacing: -1px;
+}
+
+.cta-inner p {
+  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 32px;
+  line-height: 1.7;
+}
+
+/* ── 푸터 ── */
+.footer {
+  background: #fff;
+  border-top: 1px solid #e5e7eb;
+  padding: 24px 0;
+}
+
+.footer .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-copy {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+/* ── 반응형 ── */
+@media (max-width: 860px) {
+  .hero { flex-direction: column; gap: 48px; }
+  .hero-mockup { width: 100%; }
+  .hero-title { font-size: 38px; }
+  .pain-grid { grid-template-columns: 1fr; }
+  .how-steps { flex-direction: column; }
+  .how-arrow { display: none; }
+}
+
+@media (max-width: 540px) {
+  .hero-title { font-size: 30px; letter-spacing: -1px; }
+  .nav-link { display: none; }
+  .cta-inner h2 { font-size: 26px; }
+  .footer .container { flex-direction: column; gap: 8px; }
 }
