@@ -3,6 +3,7 @@ import "./App.css";
 import CreateRoom from "./CreateRoom.jsx";
 import JoinRoom from "./JoinRoom.jsx";
 import Dashboard from "./Dashboard.jsx";
+import { api } from "./api.js";
 
 function ChooseMode({ onCreate, onJoin, onBack }) {
   return (
@@ -60,6 +61,35 @@ function ChooseMode({ onCreate, onJoin, onBack }) {
 export default function App() {
   const [view, setView] = useState("landing");
   const [roomData, setRoomData] = useState(null);
+  const [navCode, setNavCode] = useState("");
+  const [navLoading, setNavLoading] = useState(false);
+  const [navError, setNavError] = useState("");
+
+  const goByCode = async () => {
+    if (!navCode.trim()) return;
+    setNavLoading(true);
+    setNavError("");
+    try {
+      const data = await api(`/api/rooms/invite/${navCode.trim()}`);
+      setRoomData({
+        roomId: data.roomId,
+        inviteCode: navCode.trim(),
+        title: data.title,
+        topic: data.topic,
+        deadline: data.deadline,
+        roles: data.roles,
+        skillWeight: data.skillWeight,
+        timeWeight: data.timeWeight,
+        preferenceWeight: data.preferenceWeight,
+      });
+      setNavCode("");
+      setView("dashboard");
+    } catch (e) {
+      setNavError(e.message || "코드를 확인해주세요");
+    } finally {
+      setNavLoading(false);
+    }
+  };
 
   if (view === "createRoom") return (
     <CreateRoom
@@ -95,6 +125,48 @@ export default function App() {
           <div className="nav-right">
             <a href="#features" className="nav-link">기능</a>
             <a href="#how" className="nav-link">사용법</a>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, position: "relative" }}>
+              <input
+                style={{
+                  border: "1.5px solid #e5e7eb",
+                  borderRadius: 8,
+                  padding: "6px 12px",
+                  fontSize: 13,
+                  outline: "none",
+                  width: 140,
+                  fontFamily: "inherit",
+                  transition: "border-color 0.15s",
+                }}
+                placeholder="참여코드 입력"
+                value={navCode}
+                onChange={(e) => { setNavCode(e.target.value); setNavError(""); }}
+                onKeyDown={(e) => e.key === "Enter" && goByCode()}
+                onFocus={(e) => (e.target.style.borderColor = "#6366f1")}
+                onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
+              />
+              <button
+                className="nav-cta"
+                onClick={goByCode}
+                disabled={navLoading || !navCode.trim()}
+              >
+                {navLoading ? "…" : "대시보드 →"}
+              </button>
+              {navError && (
+                <span style={{
+                  position: "absolute",
+                  top: "calc(100% + 6px)",
+                  right: 0,
+                  background: "#fee2e2",
+                  color: "#dc2626",
+                  fontSize: 12,
+                  padding: "4px 10px",
+                  borderRadius: 6,
+                  whiteSpace: "nowrap",
+                }}>
+                  {navError}
+                </span>
+              )}
+            </div>
             <button className="nav-cta" onClick={() => setView("choose")}>써보기</button>
           </div>
         </div>
