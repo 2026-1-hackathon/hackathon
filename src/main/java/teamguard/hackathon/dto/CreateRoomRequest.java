@@ -12,10 +12,4 @@ public record CreateRoomRequest(
         LocalDateTime deadline,
         List<RoleRequest> roles
 ) {
-    public record RoleRequest(
-            String name,
-            int workload,
-            String description
-    ) {
-    }
 }

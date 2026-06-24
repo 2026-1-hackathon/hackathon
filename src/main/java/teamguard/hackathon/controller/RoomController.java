@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import teamguard.hackathon.domain.Role;
 import teamguard.hackathon.domain.Room;
 import teamguard.hackathon.dto.CreateRoomRequest;
+import teamguard.hackathon.dto.RoleRequest;
 import teamguard.hackathon.repository.RoleRepository;
 import teamguard.hackathon.repository.RoomRepository;
 import org.springframework.http.HttpStatus;
@@ -47,7 +48,7 @@ public class RoomController {
         roomRepository.save(room);
 
         if (request.roles() != null) {
-            for (CreateRoomRequest.RoleRequest roleRequest : request.roles()) {
+            for (RoleRequest roleRequest : request.roles()) {
                 Role role = Role.builder()
                         .name(roleRequest.name())
                         .workload(roleRequest.workload())
